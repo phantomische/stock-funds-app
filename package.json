@@ -1,6 +1,7 @@
 {
   "name": "stock-funds-app",
   "private": true,
+  "homepage": "https://phantomische.github.io/stock-funds-app",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
