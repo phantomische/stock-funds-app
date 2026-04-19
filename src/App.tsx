@@ -44,6 +44,7 @@ function App() {
   const [chartData, setChartData] = useState<ChartData | null>(null);
   const [timePeriod, setTimePeriod] = useState('daily');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Alpha Vantage API key - user needs to get one from https://www.alphavantage.co/support/#api-key
   const API_KEY = '5FT7E3P0LNASQBTZ'; // Replace with your key
@@ -56,6 +57,7 @@ function App() {
 
   const fetchStocks = async () => {
     setLoading(true);
+    setError(null);
     const stockData: StockData[] = [];
     for (const symbol of topStocks) {
       try {
@@ -70,9 +72,12 @@ function App() {
           const prevPrice = parseFloat(previous['4. close']);
           const change = ((price - prevPrice) / prevPrice) * 100;
           stockData.push({ symbol, price, change });
+        } else {
+          setError(`No data for ${symbol}. Check API key or symbol.`);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error(`Error fetching ${symbol}:`, error);
+        setError(`Failed to fetch data for ${symbol}: ${error.message}`);
       }
     }
     setStocks(stockData);
@@ -95,9 +100,12 @@ function App() {
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
           }],
         });
+      } else {
+        setError(`No chart data for ${symbol}.`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(`Error fetching chart for ${symbol}:`, error);
+      setError(`Failed to fetch chart for ${symbol}: ${error.message}`);
     }
   };
 
@@ -119,6 +127,7 @@ function App() {
       <main>
         <section className="stocks">
           <h2>Top Profitable Companies</h2>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
           <div className="stock-list">
             {stocks.map(stock => (
               <div key={stock.symbol} className="stock-item" onClick={() => fetchChartData(stock.symbol)}>
