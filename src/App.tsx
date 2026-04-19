@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -46,10 +46,9 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Alpha Vantage API key - user needs to get one from https://www.alphavantage.co/support/#api-key
-  const API_KEY = '5FT7E3P0LNASQBTZ'; // Replace with your key
+  // const API_KEY = '5FT7E3P0LNASQBTZ'; // Replace with your key
 
-  const topStocks = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA'];
+  // const topStocks = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA'];
 
   useEffect(() => {
     fetchStocks();
@@ -58,6 +57,18 @@ function App() {
   const fetchStocks = async () => {
     setLoading(true);
     setError(null);
+    // Sample data for demonstration (replace with real API when CSP allows)
+    const sampleStocks: StockData[] = [
+      { symbol: 'AAPL', price: 150.25, change: 2.5 },
+      { symbol: 'GOOGL', price: 2800.75, change: -1.2 },
+      { symbol: 'MSFT', price: 305.60, change: 1.8 },
+      { symbol: 'AMZN', price: 3300.45, change: 0.9 },
+      { symbol: 'TSLA', price: 250.10, change: -3.4 },
+    ];
+    setStocks(sampleStocks);
+    setLoading(false);
+    // Uncomment below to use real API (blocked by GitHub Pages CSP)
+    /*
     const stockData: StockData[] = [];
     for (const symbol of topStocks) {
       try {
@@ -82,14 +93,29 @@ function App() {
     }
     setStocks(stockData);
     setLoading(false);
+    */
   };
 
   const fetchChartData = async (symbol: string) => {
+    // Sample chart data
+    const samplePrices = [150, 152, 148, 155, 160, 158, 162, 165, 163, 168, 170, 172, 175, 173, 178, 180, 182, 185, 183, 188, 190, 192, 195, 193, 198, 200, 202, 205, 203, 208];
+    const dates = Array.from({ length: 30 }, (_, i) => `2024-04-${(i + 1).toString().padStart(2, '0')}`);
+    setChartData({
+      labels: dates,
+      datasets: [{
+        label: `${symbol} Price (Sample)`,
+        data: samplePrices,
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      }],
+    });
+    // Uncomment below for real API (blocked by CSP)
+    /*
     try {
       const response = await axios.get(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${API_KEY}`);
       const data = response.data['Time Series (Daily)'];
       if (data) {
-        const dates = Object.keys(data).slice(0, 30).reverse(); // Last 30 days
+        const dates = Object.keys(data).slice(0, 30).reverse();
         const prices = dates.map(date => parseFloat(data[date]['4. close']));
         setChartData({
           labels: dates,
@@ -107,12 +133,14 @@ function App() {
       console.error(`Error fetching chart for ${symbol}:`, error);
       setError(`Failed to fetch chart for ${symbol}: ${error.message}`);
     }
+    */
   };
 
   return (
     <div className="app">
       <header>
-        <h1>Stock Funds Dashboard</h1>
+        <h1>Stock Funds Dashboard (Sample Data)</h1>
+        <p>Note: Using sample data due to GitHub Pages CSP restrictions. Real API blocked.</p>
         <div className="filters">
           <select value={timePeriod} onChange={(e) => setTimePeriod(e.target.value)}>
             <option value="daily">Daily</option>
